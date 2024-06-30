@@ -1,6 +1,5 @@
-# api/bot.py
 import os
-from dotenv import load_dotenv
+from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters
 from handlers.command_handlers import start, view_airdrops, add_airdrop_handler, edit_airdrop_handler, delete_airdrop_handler, leaderboard
 from handlers.message_handlers import handle_message, button_handler
@@ -8,8 +7,7 @@ from utils.logger import setup_logging
 from database.DbContext import db
 import json
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables
 TOKEN = os.getenv('BOT_TOKEN')
 ADMIN_ID = int(os.getenv('ADMIN_ID'))
 
@@ -37,7 +35,7 @@ def handler(event, context):
     # Process the incoming request as a Telegram update
     if event.get("httpMethod") == "POST":
         data = json.loads(event.get("body"))
-        update = telegram.Update.de_json(data, application.bot)
+        update = Update.de_json(data, application.bot)
         application.update_queue.put(update)
         
         return {
